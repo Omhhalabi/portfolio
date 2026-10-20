@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Omar AL-Halabi — Portfolio
 
-## Getting Started
+A dark-mode, cybersecurity-themed personal portfolio landing page. Built
+with Next.js 16 (App Router), React 19, Tailwind CSS v4, and Motion.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** — App Router, static export (every route prerenders)
+- **React 19**
+- **Tailwind CSS v4** — CSS-first config via `@theme` in `src/app/globals.css`, no `tailwind.config.js`
+- **Motion** (`motion/react`) — scroll reveals, the AI Workflow pinned console, terminal typing
+- **lucide-react** — icons
+- Zero-dependency Canvas 2D hero background (no three.js/WebGL)
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server (Turbopack) |
+| `npm run build` | Production build — also runs `tsc` |
+| `npm run start` | Serve the production build |
+| `npm run lint` | ESLint, including `jsx-a11y` rules |
 
-## Learn More
+## Project structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  app/            Routes: page.tsx, layout.tsx, globals.css, robots.ts, sitemap.ts, icon.svg
+  components/
+    sections/     One component per landing-page section (hero, about, ai-workflow, …)
+    ui/           Design-system primitives (Button, Section, TerminalFrame, BackdropCanvas, …)
+  content/
+    profile.ts    Single source of truth for all on-page copy — edit this file to update the site
+  lib/
+    motion.ts     Shared easing/duration tokens (JS twin of the CSS motion tokens)
+    hooks.ts      useActiveSection, usePageVisible
+    utils.ts      cn() class-merge helper
+    site.ts       Canonical site URL (NEXT_PUBLIC_SITE_URL)
+docs/
+  DESIGN_SYSTEM.md        Full design spec: tokens, motion primitives, component inventory, wireframes
+  IMPLEMENTATION_NOTES.md Deliberate deviations from the spec, and content provenance
+  QA_PLAN.md              QA checklist and sign-off
+private/
+  Profile.pdf     Source LinkedIn export — gitignored, never shipped
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Updating content
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+All copy lives in [`src/content/profile.ts`](src/content/profile.ts). No
+component holds its own text. Edit that file and every section updates.
 
-## Deploy on Vercel
+## Environment variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Copy `.env.example` to `.env.local` and set:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
+
+Used for canonical tags, Open Graph URLs, `robots.txt` and `sitemap.xml`.
+
+## Deployment
+
+The app builds to fully static output — every route prerenders at build
+time. Deploy the `npm run build` output to any static-capable host
+(Vercel, Netlify, Cloudflare Pages, or a plain Node server via
+`npm run start`).
+
+Security headers (CSP, HSTS, X-Frame-Options, etc.) are set in
+`next.config.ts` and apply automatically wherever it's deployed with
+`next start` or a platform that respects Next.js's `headers()` config.
+
+## Design system
+
+See [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) for the full spec —
+color tokens with a worked WCAG contrast audit, the fluid type scale,
+motion primitives (each with a named reduced-motion fallback), and the
+complete component inventory. [`docs/IMPLEMENTATION_NOTES.md`](docs/IMPLEMENTATION_NOTES.md)
+documents where the build deliberately diverges from it and why.
